@@ -1,7 +1,7 @@
 use std::collections::{hash_map::Entry, HashMap};
 
 #[derive(Default)]
-struct Node {
+pub struct Node {
     children: HashMap<char, Node>,
     is_end: bool,
 }
@@ -13,7 +13,7 @@ pub struct Trie {
 }
 
 #[derive(Debug)]
-enum TrieError {
+pub enum TrieError {
     WordNotFound,
 }
 
@@ -48,6 +48,12 @@ impl Trie {
             return false;
         }
         current.is_end
+    }
+}
+
+impl Trie {
+    pub fn get_child<'a>(&'a self, ch: char, node: &'a Node) -> Option<&Node> {
+        node.children.get(&ch)
     }
 }
 
@@ -104,6 +110,21 @@ mod tests {
     }
 
     #[test]
+    fn test_get_child() {
+        let mut trie = Trie::default();
+        trie.add("hello");
+        trie.add("hey");
+        trie.add("hi");
+
+        let mut found = trie.get_child('h', &trie.root);
+        assert!(found.is_some());
+        found = trie.get_child('e', found.unwrap());
+        assert!(found.is_some());
+        found = trie.get_child('x', found.unwrap());
+        assert!(found.is_none());
+    }
+
+    #[test]
     fn test_delete() {
         let mut trie = Trie::default();
         trie.add("hello");
@@ -134,7 +155,6 @@ mod tests {
         assert!(result.is_err());
         match result.unwrap_err() {
             TrieError::WordNotFound => (),
-            _ => panic!("Expected WordNotFound error"),
         }
     }
 
@@ -148,7 +168,6 @@ mod tests {
         assert!(result.is_err());
         match result.unwrap_err() {
             TrieError::WordNotFound => (),
-            _ => panic!("Expected WordNotFound error"),
         }
     }
 }
