@@ -7,7 +7,7 @@ struct Node {
 }
 
 #[derive(Default)]
-struct Trie {
+pub struct Trie {
     root: Node,
     count: i32,
 }
